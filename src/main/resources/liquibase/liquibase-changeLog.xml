@@ -1,0 +1,43 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="devpav" id="1571349617618-1">
+        <preConditions>
+            <not>
+                <tableExists tableName="DIRECTORIES"/>
+            </not>
+        </preConditions>
+        <createTable tableName="DIRECTORIES">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_1"/>
+            </column>
+            <column name="DIRECTORY_NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="devpav" id="1571349617618-2">
+        <preConditions>
+            <not>
+                <tableExists tableName="IMAGES"/>
+            </not>
+        </preConditions>
+        <createTable tableName="IMAGES">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_8"/>
+            </column>
+            <column name="IMAGE_HEIGHT" type="INT"/>
+            <column name="IMAGE_LENGTH" type="BIGINT"/>
+            <column name="IMAGE_NAME" type="VARCHAR(255)"/>
+            <column name="IMAGE_WIDTH" type="INT"/>
+            <column name="IMAGE_DIRECTORY" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="devpav" id="1571349617618-3">
+        <createIndex indexName="FKRRDH75IF4OI6N5DEN2UNAB0DA_INDEX_8" tableName="IMAGES">
+            <column name="IMAGE_DIRECTORY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="devpav" id="1571349617618-4">
+        <addForeignKeyConstraint baseColumnNames="IMAGE_DIRECTORY" baseTableName="IMAGES" constraintName="FKRRDH75IF4OI6N5DEN2UNAB0DA" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="DIRECTORIES" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

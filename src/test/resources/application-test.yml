@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    data: classpath:data-sql-dev.sql
+    url: jdbc:h2:mem:test
+    username: test
+    password:
+
+  profiles:
+    active: test
+

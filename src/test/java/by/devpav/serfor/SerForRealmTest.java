@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SerForApplication.class)
-public class SerForApplicationTest {
+public class SerForRealmTest {
 
     @Test
     public void loadApp() {

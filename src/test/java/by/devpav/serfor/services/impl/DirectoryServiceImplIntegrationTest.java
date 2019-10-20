@@ -35,8 +35,8 @@ public class DirectoryServiceImplIntegrationTest extends AbstractBasicEntityServ
     @Test
     @Transactional
     public void create() {
-        final Directory directory = new Directory();
-        directory.setName(UUID.randomUUID().toString());
+        final Directory directory = new Directory(UUID.randomUUID().toString(), 500, 800);
+
         final int sizeBefore = directoryService.findAll().size();
         directoryService.create(directory);
         final int sizeAfter = directoryService.findAll().size();
@@ -48,8 +48,7 @@ public class DirectoryServiceImplIntegrationTest extends AbstractBasicEntityServ
     @Test
     @Transactional
     public void findById() {
-        final Directory directory = new Directory();
-        directory.setName(UUID.randomUUID().toString());
+        final Directory directory = new Directory(UUID.randomUUID().toString(), 500, 800);
 
         final Directory dir = directoryService.create(directory);
         final Optional<Directory> foundEntity = directoryService.findById(dir.getId());
@@ -57,6 +56,8 @@ public class DirectoryServiceImplIntegrationTest extends AbstractBasicEntityServ
         assertTrue(foundEntity.isPresent());
         assertEquals(foundEntity.get().getId(), directory.getId());
         assertEquals(foundEntity.get().getName(), directory.getName());
+        assertEquals(foundEntity.get().getHeight(), directory.getHeight());
+        assertEquals(foundEntity.get().getWidth(), directory.getWidth());
     }
 
 }

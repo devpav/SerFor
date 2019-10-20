@@ -1,6 +1,9 @@
 package by.devpav.serfor.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "images")
@@ -9,18 +12,21 @@ public class Image extends BasicEntity {
     @Column(name = "image_name")
     private String name;
 
-    @Column(name = "image_width")
-    private Integer width;
-
-    @Column(name = "image_height")
-    private Integer height;
-
     @Column(name = "image_length")
     private Long length;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_directory")
+    @JsonBackReference("image_directory")
     private Directory directory;
+
+    public Image() {
+    }
+
+    public Image(String name, Long length) {
+        this.name = name;
+        this.length = length;
+    }
 
     public String getName() {
         return name;
@@ -28,22 +34,6 @@ public class Image extends BasicEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
-    }
-
-    public Integer getHeight() {
-        return height;
-    }
-
-    public void setHeight(Integer height) {
-        this.height = height;
     }
 
     public Long getLength() {
@@ -62,4 +52,18 @@ public class Image extends BasicEntity {
         this.directory = directory;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Image)) return false;
+        Image image = (Image) o;
+        return Objects.equals(getName(), image.getName()) &&
+                Objects.equals(getLength(), image.getLength()) &&
+                Objects.equals(getDirectory(), image.getDirectory());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getLength(), getDirectory());
+    }
 }

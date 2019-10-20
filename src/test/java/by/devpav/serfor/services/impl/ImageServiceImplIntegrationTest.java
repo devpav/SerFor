@@ -27,20 +27,20 @@ public class ImageServiceImplIntegrationTest extends AbstractBasicEntityServiceT
     @Test
     @Transactional(readOnly = true)
     public void findAll() {
-        final List<Image> directories = imageService.findAll();
-        assertNotNull(directories);
+        final List<Image> images = imageService.findAll();
+        assertNotNull(images);
     }
 
     @Test
     @Transactional
     public void create() {
-        final Image directory = new Image();
-        directory.setName(UUID.randomUUID().toString());
+        final Image image = new Image(UUID.randomUUID().toString(), 10000000L);
+
         final int sizeBefore = imageService.findAll().size();
-        imageService.create(directory);
+        imageService.create(image);
         final int sizeAfter = imageService.findAll().size();
 
-        assertNotNull(directory.getId());
+        assertNotNull(image.getId());
         assertEquals(sizeBefore + 1, sizeAfter);
     }
 

@@ -1,6 +1,6 @@
 package by.devpav.serfor.resources;
 
-import by.devpav.serfor.domain.BasicEntity;
+import by.devpav.serfor.domain.dtos.BasicEntityDTO;
 
-public interface BasicEntityResource<T extends BasicEntity> extends Resource<T, Long> {
+public interface BasicEntityResource<T extends BasicEntityDTO> extends Resource<T, Long> {
 }

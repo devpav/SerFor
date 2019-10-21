@@ -47,4 +47,10 @@ public abstract class AbstractFacade<T, DTO, ID> implements Facade<DTO, ID> {
         service.deleteByIds(ids);
     }
 
+    @Override
+    public DTO update(DTO entity) {
+        final T toEntity = mapper.toEntity(entity);
+        final T updatedEntity = service.update(toEntity);
+        return mapper.toDTO(updatedEntity);
+    }
 }

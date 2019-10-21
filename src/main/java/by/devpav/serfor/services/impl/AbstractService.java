@@ -39,7 +39,7 @@ public abstract class AbstractService<T, ID> implements Service<T, ID> {
     @Override
     @Transactional
     public T update(T entity) {
-        requireNotNullThrow(entity, "Entity mustn't be is null [create]");
+        requireNotNullThrow(entity, "Entity mustn't be is null [update]");
         return jpaRepository.save(entity);
     }
 

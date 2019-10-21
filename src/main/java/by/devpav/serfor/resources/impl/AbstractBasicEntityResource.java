@@ -54,4 +54,10 @@ public abstract class AbstractBasicEntityResource<DTO extends BasicEntityDTO> im
         return ResponseEntity.ok().build();
     }
 
+    @Override
+    @PutMapping
+    public ResponseEntity<DTO> update(@RequestBody DTO entityDTO) {
+        final DTO updatedEntity = basicEntityFacade.update(entityDTO);
+        return HttpResponse.responseEntity(updatedEntity);
+    }
 }

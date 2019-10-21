@@ -8,6 +8,7 @@ public interface Facade<DTO, ID> {
     List<DTO> findAll();
     DTO create(DTO entity);
     Optional<DTO> findById(ID id);
+    DTO update(DTO entity);
 
     void deleteById(ID id);
     void deleteByIds(ID[] ids);

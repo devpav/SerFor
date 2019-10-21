@@ -31,4 +31,5 @@ public class RealmFacadeImpl extends AbstractBasicEntityFacade<Realm, RealmDTO> 
         final RealmConfig realmConfig = realmService.getRealmConfig(realmName);
         return realmConfigMapper.toDTO(realmConfig);
     }
+
 }

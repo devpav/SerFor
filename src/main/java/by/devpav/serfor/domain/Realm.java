@@ -25,7 +25,7 @@ public class Realm extends BasicEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "realm_config_id", referencedColumnName = "id")
+
     @JsonBackReference("realm-realm-config")
     private RealmConfig realmConfig;
 

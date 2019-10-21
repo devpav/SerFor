@@ -1,18 +1,16 @@
 package by.devpav.serfor.services.impl;
 
-import by.devpav.serfor.domain.BasicEntity;
-import by.devpav.serfor.domain.Directory;
 import by.devpav.serfor.domain.Realm;
 import by.devpav.serfor.domain.RealmConfig;
+import by.devpav.serfor.exceptions.EntityNotFoundException;
+import by.devpav.serfor.exceptions.realm.RealmMustNotContainsNameIsNull;
+import by.devpav.serfor.exceptions.realm.RealmWithNameAlreadyExists;
 import by.devpav.serfor.repository.RealmRepository;
-import by.devpav.serfor.services.DirectoryService;
 import by.devpav.serfor.services.RealmService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-
+import static by.devpav.serfor.exceptions.ObjectThrow.requireNotNullThrow;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -20,28 +18,35 @@ import static java.util.Objects.nonNull;
 public class RealmServiceImpl extends AbstractBasicEntityService<Realm> implements RealmService {
 
     private final RealmRepository realmRepository;
-    private final DirectoryService directoryService;
 
-    public RealmServiceImpl(RealmRepository realmRepository,
-                            DirectoryService directoryService) {
+    public RealmServiceImpl(RealmRepository realmRepository) {
         super(realmRepository);
         this.realmRepository = realmRepository;
-        this.directoryService = directoryService;
     }
 
 
     @Override
     @Transactional
     public Realm update(Realm entity) {
-        final Realm update = super.update(entity);
+        requireNotNullThrow(entity, "Entity mustn't be is null [update]");
+        requireNotNullThrow(entity.getId(), "Entity ID mustn't be is null [update]");
 
-        if (nonNull(update.getDirectories())) {
-            final Long[] longs = update.getDirectories().stream().map(BasicEntity::getId).toArray(Long[]::new);
-            final List<Directory> references = directoryService.getReferences(longs);
-            update.setDirectories(new HashSet<>(references));
+        final Realm foundRealm = realmRepository.findById(entity.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Entity with ID [" + entity.getId() + "] not found"));
+
+        if (isNull(entity.getName())) {
+            throw new RealmMustNotContainsNameIsNull();
         }
 
-        return update;
+        final Realm realm = realmRepository.findByName(entity.getName());
+
+        if (nonNull(realm)) {
+            throw new RealmWithNameAlreadyExists();
+        }
+
+        foundRealm.setName(entity.getName());
+
+        return realmRepository.save(foundRealm);
     }
 
     @Override
@@ -60,6 +65,9 @@ public class RealmServiceImpl extends AbstractBasicEntityService<Realm> implemen
 
     @Override
     public Realm create(Realm entity) {
+        if (nonNull(entity) && nonNull(entity.getRealmConfig()))
+            entity.getRealmConfig().setRealm(entity);
         return super.create(entity);
     }
+
 }

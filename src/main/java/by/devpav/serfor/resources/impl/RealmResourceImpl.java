@@ -6,10 +6,7 @@ import by.devpav.serfor.facade.RealmFacade;
 import by.devpav.serfor.resources.RealmResource;
 import by.devpav.serfor.util.HttpResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/realms")
@@ -27,5 +24,10 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
     public ResponseEntity<RealmConfigDTO> getRealmConfig(@PathVariable  String realmName) {
         final RealmConfigDTO realmConfig = realmFacade.getRealmConfig(realmName);
         return HttpResponse.responseEntity(realmConfig);
+    }
+
+    @Override
+    public ResponseEntity<RealmDTO> update(@RequestBody RealmDTO entityDTO) {
+        return super.update(entityDTO);
     }
 }

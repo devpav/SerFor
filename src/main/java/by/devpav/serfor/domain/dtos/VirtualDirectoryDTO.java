@@ -1,6 +1,6 @@
 package by.devpav.serfor.domain.dtos;
 
-public class DirectoryDTO extends BasicEntityDTO {
+public class VirtualDirectoryDTO extends BasicEntityDTO {
 
     private String name;
     private Integer height;
@@ -29,4 +29,5 @@ public class DirectoryDTO extends BasicEntityDTO {
     public void setWidth(Integer width) {
         this.width = width;
     }
+
 }

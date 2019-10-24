@@ -1,11 +1,11 @@
 package by.devpav.serfor.facade;
 
-import by.devpav.serfor.domain.dtos.DirectoryDTO;
+import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO;
 
 import java.util.List;
 
-public interface DirectoryFacade extends BasicEntityFacade<DirectoryDTO> {
+public interface DirectoryFacade extends BasicEntityFacade<VirtualDirectoryDTO> {
 
-    public List<DirectoryDTO> findByRealmName(String realmName);
+    public List<VirtualDirectoryDTO> findByRealmName(String realmName);
 
 }

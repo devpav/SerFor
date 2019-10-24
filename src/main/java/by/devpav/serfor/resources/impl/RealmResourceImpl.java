@@ -1,14 +1,15 @@
 package by.devpav.serfor.resources.impl;
 
-import by.devpav.serfor.domain.Image;
-import by.devpav.serfor.domain.dtos.DirectoryDTO;
+import by.devpav.serfor.domain.dtos.ImageDTO;
 import by.devpav.serfor.domain.dtos.RealmConfigDTO;
 import by.devpav.serfor.domain.dtos.RealmDTO;
+import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO;
 import by.devpav.serfor.facade.DirectoryFacade;
 import by.devpav.serfor.facade.ImageFacade;
 import by.devpav.serfor.facade.RealmFacade;
 import by.devpav.serfor.resources.RealmResource;
 import by.devpav.serfor.util.HttpResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/realms/")
+@RequestMapping(value = "/api/realms")
 public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> implements RealmResource {
 
     private final DirectoryFacade directoryFacade;
@@ -24,7 +25,9 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
     private final ImageFacade imageFacade;
     private final RealmFacade realmFacade;
 
-    public RealmResourceImpl(RealmFacade realmFacade, DirectoryFacade directoryFacade, ImageFacade imageFacade) {
+    public RealmResourceImpl(RealmFacade realmFacade,
+                             DirectoryFacade directoryFacade,
+                             ImageFacade imageFacade) {
         super(realmFacade);
         this.directoryFacade = directoryFacade;
         this.imageFacade = imageFacade;
@@ -32,28 +35,31 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
     }
 
 
-    @GetMapping("{realmName}/original/upload")
-    public ResponseEntity<Image> uploadOriginImage(@RequestParam("image") MultipartFile multipart,
-                                                   @PathVariable String realmName) {
-        final Image image = imageFacade.upload(multipart, realmName);
-        return HttpResponse.responseEntity(image);
+    @PostMapping(value = "{realmName}/original/upload", produces = {
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<ImageDTO> uploadOriginImage(@RequestParam("image") MultipartFile multipart,
+                                                      @PathVariable("realmName") String realmName) {
+        final ImageDTO uploadedImage = imageFacade.uploadOriginalImage(multipart, realmName);
+        return HttpResponse.responseEntity(uploadedImage);
     }
 
     @GetMapping("{realmName}/directories")
-    public ResponseEntity<List<DirectoryDTO>> getImageByRealmName(@PathVariable String realmName) {
-        final List<DirectoryDTO> directories = directoryFacade.findByRealmName(realmName);
+    public ResponseEntity<List<VirtualDirectoryDTO>> getDirectoriesByRealmName(
+            @PathVariable("realmName") String realmName) {
+        final List<VirtualDirectoryDTO> directories = directoryFacade.findByRealmName(realmName);
         return HttpResponse.responseCollection(directories);
     }
 
-    @GetMapping
-    public ResponseEntity<List<DirectoryDTO>> getImageByDirectoryAndRealm(@PathVariable String realmName,
-                                                                          @PathVariable String directory,
-                                                                          @PathVariable String image) {
-        final List<DirectoryDTO> directories = directoryFacade.findByRealmName(realmName);
-        return HttpResponse.responseCollection(directories);
+    @GetMapping("{realmName}/{image}")
+    public ResponseEntity<List<VirtualDirectoryDTO>> getImageByDirectoryAndRealm(
+            @PathVariable String realmName,
+            @PathVariable String image,
+            @RequestParam("width") Integer width,
+            @RequestParam("height") Integer height) {
+        return ResponseEntity.ok().build();
     }
-
-
 
     @GetMapping
     public ResponseEntity<List<RealmDTO>> getRealms() {
@@ -61,16 +67,23 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
         return HttpResponse.responseCollection(realms);
     }
 
-    @PostMapping
-    public ResponseEntity<List<RealmDTO>> createRealm(@RequestBody RealmDTO realm) {
-        return HttpResponse.responseEntity(realmFacade.create(realm));
+    @GetMapping("/{realmName}")
+    public ResponseEntity<RealmDTO> getRealmByName(@PathVariable String realmName) {
+        RealmDTO realm = realmFacade.getRealmByName(realmName);
+        return HttpResponse.responseEntity(realm);
     }
 
 
-    @Override
-    @GetMapping
+    @PostMapping
+    public ResponseEntity<RealmDTO> createRealm(@RequestBody RealmDTO realm) {
+        return HttpResponse.responseEntity(realmFacade.create(realm));
+    }
+
+    @Override()
+    @GetMapping("/{realmName}/config")
     public ResponseEntity<RealmConfigDTO> getRealmConfig(@PathVariable String realmName) {
         final RealmConfigDTO realmConfig = realmFacade.getRealmConfig(realmName);
         return HttpResponse.responseEntity(realmConfig);
     }
+
 }

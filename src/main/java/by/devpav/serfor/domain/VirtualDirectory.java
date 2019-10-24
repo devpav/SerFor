@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "directories")
-public class Directory extends BasicEntity {
+@Table(name = "virtual_directories")
+public class VirtualDirectory extends BasicEntity {
 
     @Column(name = "directory_origin")
     private Boolean origin;
@@ -22,7 +22,7 @@ public class Directory extends BasicEntity {
     private Realm realm;
 
     @OneToMany(
-            mappedBy = "directory",
+            mappedBy = "virtualDirectory",
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true
@@ -35,10 +35,10 @@ public class Directory extends BasicEntity {
     @Column(name = "directory_height")
     private Integer height;
 
-    public Directory() {
+    public VirtualDirectory() {
     }
 
-    public Directory(String name, Integer width, Integer height) {
+    public VirtualDirectory(String name, Integer width, Integer height) {
         this.name = name;
         this.width = width;
         this.height = height;
@@ -95,13 +95,13 @@ public class Directory extends BasicEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Directory)) return false;
-        Directory directory = (Directory) o;
-        return Objects.equals(getName(), directory.getName()) &&
-                Objects.equals(getRealm(), directory.getRealm()) &&
-                Objects.equals(getImages(), directory.getImages()) &&
-                Objects.equals(getWidth(), directory.getWidth()) &&
-                Objects.equals(getHeight(), directory.getHeight());
+        if (!(o instanceof VirtualDirectory)) return false;
+        VirtualDirectory virtualDirectory = (VirtualDirectory) o;
+        return Objects.equals(getName(), virtualDirectory.getName()) &&
+                Objects.equals(getRealm(), virtualDirectory.getRealm()) &&
+                Objects.equals(getImages(), virtualDirectory.getImages()) &&
+                Objects.equals(getWidth(), virtualDirectory.getWidth()) &&
+                Objects.equals(getHeight(), virtualDirectory.getHeight());
     }
 
     @Override

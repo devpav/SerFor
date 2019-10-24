@@ -1,16 +1,16 @@
 package by.devpav.serfor.facade.mappers;
 
-import by.devpav.serfor.domain.Directory;
-import by.devpav.serfor.domain.dtos.DirectoryDTO;
+import by.devpav.serfor.domain.VirtualDirectory;
+import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface DirectoryMapper extends BasicEntityMapper<Directory, DirectoryDTO> {
+public interface DirectoryMapper extends BasicEntityMapper<VirtualDirectory, VirtualDirectoryDTO> {
 
     @Override
-    Directory toEntity(DirectoryDTO directoryDTO);
+    VirtualDirectory toEntity(VirtualDirectoryDTO virtualDirectoryDTO);
 
     @Override
-    DirectoryDTO toDTO(Directory object);
+    VirtualDirectoryDTO toDTO(VirtualDirectory object);
 
 }

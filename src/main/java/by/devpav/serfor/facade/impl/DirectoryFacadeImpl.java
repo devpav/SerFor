@@ -1,30 +1,31 @@
 package by.devpav.serfor.facade.impl;
 
-import by.devpav.serfor.domain.Directory;
-import by.devpav.serfor.domain.dtos.DirectoryDTO;
+import by.devpav.serfor.domain.VirtualDirectory;
+import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO;
 import by.devpav.serfor.facade.DirectoryFacade;
 import by.devpav.serfor.facade.mappers.DirectoryMapper;
-import by.devpav.serfor.services.DirectoryService;
+import by.devpav.serfor.services.VirtualDirectoryService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class DirectoryFacadeImpl extends AbstractBasicEntityFacade<Directory, DirectoryDTO> implements DirectoryFacade {
+public class DirectoryFacadeImpl extends AbstractBasicEntityFacade<VirtualDirectory, VirtualDirectoryDTO> implements DirectoryFacade {
 
-    private final DirectoryService directoryService;
+    private final VirtualDirectoryService virtualDirectoryService;
     private final DirectoryMapper directoryMapper;
 
-    public DirectoryFacadeImpl(DirectoryService directoryService,
+    public DirectoryFacadeImpl(VirtualDirectoryService virtualDirectoryService,
                                DirectoryMapper directoryMapper) {
-        super(directoryService, directoryMapper);
-        this.directoryService = directoryService;
+        super(virtualDirectoryService, directoryMapper);
+        this.virtualDirectoryService = virtualDirectoryService;
         this.directoryMapper = directoryMapper;
     }
 
     @Override
-    public List<DirectoryDTO> findByRealmName(String realmName) {
-        final List<Directory> directories = directoryService.findByRealmName(realmName);
+    public List<VirtualDirectoryDTO> findByRealmName(String realmName) {
+        final List<VirtualDirectory> directories = virtualDirectoryService.findByRealmName(realmName);
         return directoryMapper.toDTO(directories);
     }
+
 }

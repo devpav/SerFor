@@ -19,7 +19,7 @@ public class Realm extends BasicEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Directory> directories;
+    private Set<VirtualDirectory> directories;
 
     @OneToOne(mappedBy = "realm",
             cascade = CascadeType.ALL,
@@ -45,11 +45,11 @@ public class Realm extends BasicEntity {
         this.name = name;
     }
 
-    public Set<Directory> getDirectories() {
+    public Set<VirtualDirectory> getDirectories() {
         return directories;
     }
 
-    public void setDirectories(Set<Directory> directories) {
+    public void setDirectories(Set<VirtualDirectory> directories) {
         this.directories = directories;
     }
 

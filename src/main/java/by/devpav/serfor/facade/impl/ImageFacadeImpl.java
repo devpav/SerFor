@@ -12,16 +12,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageFacadeImpl extends AbstractBasicEntityFacade<Image, ImageDTO> implements ImageFacade {
 
     private final ImageService imageService;
+    private final ImageMapper imageMapper;
 
     public ImageFacadeImpl(ImageService imageService,
                            ImageMapper imageMapper) {
         super(imageService, imageMapper);
         this.imageService = imageService;
+        this.imageMapper = imageMapper;
     }
 
     @Override
-    public Image upload(MultipartFile multipartFile, String realm) {
-        return imageService.upload(multipartFile, realm);
+    public ImageDTO uploadOriginalImage(MultipartFile multipartFile, String realm) {
+        final Image uploadedImage = imageService.uploadOriginalImage(multipartFile, realm);
+        return imageMapper.toDTO(uploadedImage);
     }
 
 }

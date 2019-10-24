@@ -18,7 +18,7 @@ public class Image extends BasicEntity {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_directory")
     @JsonBackReference("image_directory")
-    private Directory directory;
+    private VirtualDirectory virtualDirectory;
 
     public Image() {
     }
@@ -44,12 +44,12 @@ public class Image extends BasicEntity {
         this.length = length;
     }
 
-    public Directory getDirectory() {
-        return directory;
+    public VirtualDirectory getVirtualDirectory() {
+        return virtualDirectory;
     }
 
-    public void setDirectory(Directory directory) {
-        this.directory = directory;
+    public void setVirtualDirectory(VirtualDirectory virtualDirectory) {
+        this.virtualDirectory = virtualDirectory;
     }
 
     @Override
@@ -59,11 +59,11 @@ public class Image extends BasicEntity {
         Image image = (Image) o;
         return Objects.equals(getName(), image.getName()) &&
                 Objects.equals(getLength(), image.getLength()) &&
-                Objects.equals(getDirectory(), image.getDirectory());
+                Objects.equals(getVirtualDirectory(), image.getVirtualDirectory());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getLength(), getDirectory());
+        return Objects.hash(getId(), getName(), getLength(), getVirtualDirectory());
     }
 }

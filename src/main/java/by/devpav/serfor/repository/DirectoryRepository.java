@@ -1,15 +1,15 @@
 package by.devpav.serfor.repository;
 
-import by.devpav.serfor.domain.Directory;
+import by.devpav.serfor.domain.VirtualDirectory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface DirectoryRepository extends BasicEntityRepository<Directory> {
+public interface DirectoryRepository extends BasicEntityRepository<VirtualDirectory> {
 
-    Directory findByName(String name);
+    VirtualDirectory findByName(String name);
 
-    List<Directory> findByRealm_Name(String realmName);
+    List<VirtualDirectory> findByRealm_Name(String realmName);
 
 }

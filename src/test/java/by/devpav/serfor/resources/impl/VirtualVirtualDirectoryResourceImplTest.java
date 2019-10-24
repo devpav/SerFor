@@ -2,7 +2,7 @@ package by.devpav.serfor.resources.impl;
 
 import org.junit.Test;
 
-public class DirectoryResourceImplTest extends AbstractBasicEntityResourceTest {
+public class VirtualVirtualDirectoryResourceImplTest extends AbstractBasicEntityResourceTest {
 
     @Test
     public void findAll() {

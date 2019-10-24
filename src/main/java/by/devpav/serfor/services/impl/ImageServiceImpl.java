@@ -1,16 +1,16 @@
 package by.devpav.serfor.services.impl;
 
-import by.devpav.serfor.domain.Directory;
 import by.devpav.serfor.domain.Image;
 import by.devpav.serfor.domain.Realm;
+import by.devpav.serfor.domain.VirtualDirectory;
 import by.devpav.serfor.exceptions.ObjectThrow;
 import by.devpav.serfor.factory.DirectoryFactory;
 import by.devpav.serfor.factory.ImageFactory;
 import by.devpav.serfor.repository.ImageRepository;
-import by.devpav.serfor.services.DirectoryService;
 import by.devpav.serfor.services.ImageService;
 import by.devpav.serfor.services.ImageUploader;
 import by.devpav.serfor.services.RealmService;
+import by.devpav.serfor.services.VirtualDirectoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +28,7 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
 
     private final ImageUploader imageUploader;
     private final RealmService realmService;
-    private final DirectoryService directoryService;
+    private final VirtualDirectoryService virtualDirectoryService;
     private final ImageRepository imageRepository;
     private final DirectoryFactory directoryFactory;
     private final ImageFactory imageFactory;
@@ -36,13 +36,13 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
     public ImageServiceImpl(ImageRepository imageRepository,
                             ImageUploader imageUploader,
                             RealmService realmService,
-                            DirectoryService directoryService,
+                            VirtualDirectoryService virtualDirectoryService,
                             DirectoryFactory directoryFactory,
                             ImageFactory imageFactory) {
         super(imageRepository);
         this.imageUploader = imageUploader;
         this.realmService = realmService;
-        this.directoryService = directoryService;
+        this.virtualDirectoryService = virtualDirectoryService;
         this.imageRepository = imageRepository;
         this.directoryFactory = directoryFactory;
         this.imageFactory = imageFactory;
@@ -56,13 +56,13 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
 
     @Override
     @Transactional
-    public Image upload(MultipartFile multipartFile, String realm) {
+    public Image uploadOriginalImage(MultipartFile multipartFile, String realm) {
         ObjectThrow.requireNotNullThrow(multipartFile, "MultipartFile mustn't be is null");
         ObjectThrow.requireNotNullThrow(realm, "Realm mustn't be is null");
 
         final String originalFilename = multipartFile.getOriginalFilename();
 
-        byte[] bytes = null;
+        byte[] bytes = new byte[]{};
         try {
             bytes = multipartFile.getBytes();
         } catch (IOException e) {
@@ -75,16 +75,16 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
 
         ObjectThrow.requireRealmExists(realmEntity, "Realm [" + realm + "] not found");
 
-        Directory originFolder = null;
+        VirtualDirectory originFolder = null;
 
-        if (nonNull( realmEntity.getRealmConfig())) {
+        if (nonNull(realmEntity.getRealmConfig())) {
             final String realmCommonDir = realmEntity.getRealmConfig().getRealmDir();
-            originFolder = directoryService.findByName(realmCommonDir);
+            originFolder = virtualDirectoryService.findByName(realmCommonDir);
         }
 
         if (isNull(originFolder)) {
             final String originalFolderName = "origin_folder";
-            originFolder = directoryService.findByName(originalFolderName);
+            originFolder = virtualDirectoryService.findByName(originalFolderName);
 
             if (isNull(originFolder)) {
                 final Path resolve = Paths.get(System.getProperty("user.home")).resolve(originalFolderName);
@@ -98,7 +98,7 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
             }
 
             originFolder = directoryFactory.create(originalFolderName, realmEntity, true);
-            originFolder = directoryService.create(originFolder);
+            originFolder = virtualDirectoryService.create(originFolder);
             realmEntity.getDirectories().add(originFolder);
             realmService.update(realmEntity);
         }

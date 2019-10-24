@@ -18,7 +18,7 @@
     "name": "ser-for",
     "realmConfig": {
       "id": null,
-      "realmDir": "ser-for-directory"
+      "realmDir": "ser-for-virtualDirectory"
     }
   }
 ```

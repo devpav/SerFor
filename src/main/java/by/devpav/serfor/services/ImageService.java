@@ -5,5 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService extends BasicEntityService<Image> {
 
-    public Image upload(MultipartFile multipartFile, String realm);
+    /** The method for loading original image in realmDir folder.
+     * @param multipartFile the multipartFile has bytes future of picture
+     * @param realm realm is name created realm
+     * */
+    Image uploadOriginalImage(MultipartFile multipartFile, String realm);
 }

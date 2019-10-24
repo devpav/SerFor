@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface DirectoryResource extends BasicEntityResource<DirectoryDTO> {
+public interface DirectoryResource {
 
     public ResponseEntity<List<DirectoryDTO>> getByRealmName(String realmName);
 

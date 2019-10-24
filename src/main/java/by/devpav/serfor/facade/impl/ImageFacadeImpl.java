@@ -21,7 +21,6 @@ public class ImageFacadeImpl extends AbstractBasicEntityFacade<Image, ImageDTO> 
 
     @Override
     public Image upload(MultipartFile multipartFile, String realm) {
-
         return imageService.upload(multipartFile, realm);
     }
 

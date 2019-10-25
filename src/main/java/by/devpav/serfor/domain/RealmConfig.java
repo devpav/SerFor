@@ -25,6 +25,14 @@ public class RealmConfig extends BasicEntity {
     }
 
 
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
     public String getRealmVirtualDirectory() {
         return realmVirtualDirectory;
     }

@@ -118,19 +118,22 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
         final Realm realmByName = realmService.findRealmByName(realm);
         ObjectThrow.requireNotNullThrow(realmByName, "Realm mustn't be is null");
 
-        final Image image = imageRepository.findByOriginName(originalNameImage);
+        final Image image = imageRepository.findByVirtualName(originalNameImage);
 
         if (isNull(image)) {
             throw new ImageNotFoundException("Image not found by original name");
         }
 
-        VirtualDirectory virtualDirectory =
-                virtualDirectoryService.findVirtualDirectoryByRealmNameAndWidthAndHeight(realm, width, height);
+        if (!image.getOriginName().equals(image.getVirtualName())) {
+            throw new ImageNotFoundException("Image not found by original name");
+        }
+
+        VirtualDirectory virtualDirectory = virtualDirectoryService.findVirtualDirectory(realm, width, height);
 
         if (isNull(virtualDirectory)) {
-            final String nameVirtualDirectory =  width + "_x_" + height;
-            final VirtualDirectory createdVirtualDirectory = new VirtualDirectory(nameVirtualDirectory, width, height);
-            virtualDirectory = virtualDirectoryService.create(createdVirtualDirectory);
+            final String nameVirtualDirectory = width + "_x_" + height;
+            virtualDirectory = new VirtualDirectory(nameVirtualDirectory, width, height);
+            virtualDirectory = virtualDirectoryService.create(virtualDirectory);
         }
 
         if (isNull(virtualDirectory.getImages())) {
@@ -140,11 +143,15 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
         final Image imageFromVirtualDirectory = virtualDirectory.getImages().stream()
                 .filter(item -> nonNull(item.getId()))
                 .filter(item -> item.getId().equals(image.getId()))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
+
+        final String homeDirectory = System.getProperty("user.home");
+        final Path pathHomeDirectory = Paths.get(homeDirectory).resolve("ser_for");
 
         if (nonNull(imageFromVirtualDirectory)) {
             final String virtualName = imageFromVirtualDirectory.getVirtualName();
-            final Path serFor = Paths.get(System.getProperty("user.home")).resolve("ser_for").resolve(virtualName);
+            final Path serFor = pathHomeDirectory.resolve(virtualName);
 
             if (Files.notExists(serFor)) {
                 throw new ImageNotFoundException("Image not found on the disk");
@@ -152,6 +159,10 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
 
             return imageFromVirtualDirectory;
         }
+
+        final Path uploadPath = imageUploader.upload(imageFromVirtualDirectory, virtualDirectory);
+
+        // TODO author devpav Append logic for create new entity in database.
 
         return null;
     }

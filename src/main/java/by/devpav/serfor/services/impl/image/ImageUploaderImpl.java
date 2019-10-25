@@ -1,5 +1,7 @@
 package by.devpav.serfor.services.impl.image;
 
+import by.devpav.serfor.domain.Image;
+import by.devpav.serfor.domain.VirtualDirectory;
 import by.devpav.serfor.services.ImageUploader;
 import org.springframework.stereotype.Component;
 
@@ -65,5 +67,42 @@ public class ImageUploaderImpl implements ImageUploader {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Path upload(final Image originalImage, final VirtualDirectory virtualDirectory) {
+        Path pathToResizedImage = null;
+
+        try {
+            final Path resizedImage = Paths.get(System.getProperty("user.home"))
+                    .resolve(originalImage.getVirtualName());
+            final BufferedImage bufferedImage = ImageIO.read(resizedImage.toFile());
+
+            final String imageOriginName = originalImage.getOriginName();
+            final Integer directoryHeight = virtualDirectory.getHeight();
+            final Integer directoryWidth = virtualDirectory.getWidth();
+
+            final String generateImageName =
+                    imageNameGenerator.generateImageName(imageOriginName, directoryHeight, directoryWidth);
+
+            final String imageExtension = imageRipper.getImageExtension(imageOriginName);
+
+            final BufferedImage bufferedResizedImage =
+                    imageResizer.resize(bufferedImage, directoryHeight, directoryWidth);
+
+            pathToResizedImage = Paths.get(System.getProperty("user.home")).resolve(generateImageName);
+
+            final FileOutputStream fileOutputStream = new FileOutputStream(pathToResizedImage.toFile());
+            try (final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream)) {
+                final boolean isWrote = ImageIO.write(bufferedResizedImage, imageExtension, bufferedOutputStream);
+
+                if (!isWrote) return null;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return pathToResizedImage;
     }
 }

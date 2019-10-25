@@ -10,5 +10,6 @@ public interface VirtualDirectoryService extends BasicEntityService<VirtualDirec
 
     VirtualDirectory findByName(String name);
     List<VirtualDirectory> findByRealmName(String realmName);
+    VirtualDirectory findVirtualDirectoryByRealmNameAndWidthAndHeight(String realmName, Integer width, Integer height);
 
 }

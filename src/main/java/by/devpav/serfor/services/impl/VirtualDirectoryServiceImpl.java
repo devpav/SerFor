@@ -31,4 +31,11 @@ public class VirtualDirectoryServiceImpl extends AbstractBasicEntityService<Virt
         return directoryRepository.findByRealm_Name(realmName);
     }
 
+    @Override
+    public VirtualDirectory findVirtualDirectoryByRealmNameAndWidthAndHeight(final String realmName,
+                                                                             final Integer width,
+                                                                             final Integer height) {
+        return directoryRepository.findByRealm_NameAndWidthAndHeight(realmName, width, height);
+    }
+
 }

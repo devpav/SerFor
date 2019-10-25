@@ -10,4 +10,7 @@ public interface ImageService extends BasicEntityService<Image> {
      * @param realm realm is name created realm
      * */
     Image uploadOriginalImage(MultipartFile multipartFile, String realm);
+
+    public Image getResizedImage(String realm, String originalNameImage, Integer width, Integer height);
+
 }

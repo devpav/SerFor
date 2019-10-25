@@ -12,4 +12,6 @@ public interface DirectoryRepository extends BasicEntityRepository<VirtualDirect
 
     List<VirtualDirectory> findByRealm_Name(String realmName);
 
+    VirtualDirectory findByRealm_NameAndWidthAndHeight(String realm, Integer width, Integer height);
+
 }

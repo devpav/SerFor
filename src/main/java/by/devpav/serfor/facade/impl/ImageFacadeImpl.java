@@ -27,4 +27,10 @@ public class ImageFacadeImpl extends AbstractBasicEntityFacade<Image, ImageDTO> 
         return imageMapper.toDTO(uploadedImage);
     }
 
+    @Override
+    public ImageDTO getResizedImage(String realm, String originalNameImage, Integer width, Integer height) {
+        Image resizedImage = imageService.getResizedImage(realm, originalNameImage, width, height);
+        return imageMapper.toDTO(resizedImage);
+    }
+
 }

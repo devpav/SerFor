@@ -13,19 +13,10 @@ public class Realm extends BasicEntity {
     @Column(name = "realm_name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(
-            mappedBy = "realm",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "realm", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VirtualDirectory> directories;
 
-    @OneToOne(mappedBy = "realm",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
-
+    @OneToOne(mappedBy = "realm", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonBackReference("realm-realm-config")
     private RealmConfig realmConfig;
 
@@ -74,4 +65,5 @@ public class Realm extends BasicEntity {
     public int hashCode() {
         return Objects.hash(getId(), getName());
     }
+
 }

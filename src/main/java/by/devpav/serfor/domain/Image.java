@@ -9,31 +9,45 @@ import java.util.Objects;
 @Table(name = "images")
 public class Image extends BasicEntity {
 
-    @Column(name = "image_name")
-    private String name;
+    @Column(name = "image_origin_name")
+    private String originName;
+
+    @Id
+    @Column(name = "image_origin_name")
+    private String virtualName;
 
     @Column(name = "image_length")
     private Long length;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "image_directory")
-    @JsonBackReference("image_directory")
+    @JoinColumn(name = "image_virtual_directory")
+    @JsonBackReference("image_virtual_directory")
     private VirtualDirectory virtualDirectory;
 
     public Image() {
     }
 
-    public Image(String name, Long length) {
-        this.name = name;
+    public Image(String originName, String virtualName, Long length) {
+        this.originName = originName;
+        this.virtualName = virtualName;
         this.length = length;
     }
 
-    public String getName() {
-        return name;
+
+    public String getOriginName() {
+        return originName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOriginName(String originName) {
+        this.originName = originName;
+    }
+
+    public String getVirtualName() {
+        return virtualName;
+    }
+
+    public void setVirtualName(String virtualName) {
+        this.virtualName = virtualName;
     }
 
     public Long getLength() {
@@ -57,13 +71,15 @@ public class Image extends BasicEntity {
         if (this == o) return true;
         if (!(o instanceof Image)) return false;
         Image image = (Image) o;
-        return Objects.equals(getName(), image.getName()) &&
+        return Objects.equals(getOriginName(), image.getOriginName()) &&
+                Objects.equals(getVirtualName(), image.getVirtualName()) &&
                 Objects.equals(getLength(), image.getLength()) &&
                 Objects.equals(getVirtualDirectory(), image.getVirtualDirectory());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getLength(), getVirtualDirectory());
+        return Objects.hash(getId(), getOriginName(), getVirtualName(), getLength(), getVirtualDirectory());
     }
+
 }

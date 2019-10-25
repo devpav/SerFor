@@ -3,6 +3,7 @@ package by.devpav.serfor.services.impl;
 import by.devpav.serfor.domain.Image;
 import by.devpav.serfor.domain.Realm;
 import by.devpav.serfor.domain.VirtualDirectory;
+import by.devpav.serfor.exceptions.ImageNotFoundException;
 import by.devpav.serfor.exceptions.ObjectThrow;
 import by.devpav.serfor.factory.DirectoryFactory;
 import by.devpav.serfor.factory.ImageFactory;
@@ -11,6 +12,8 @@ import by.devpav.serfor.services.ImageService;
 import by.devpav.serfor.services.ImageUploader;
 import by.devpav.serfor.services.RealmService;
 import by.devpav.serfor.services.VirtualDirectoryService;
+import by.devpav.serfor.services.impl.image.ImageResizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,26 +29,23 @@ import static java.util.Objects.nonNull;
 @Service
 public class ImageServiceImpl extends AbstractBasicEntityService<Image> implements ImageService {
 
-    private final ImageUploader imageUploader;
-    private final RealmService realmService;
-    private final VirtualDirectoryService virtualDirectoryService;
-    private final ImageRepository imageRepository;
-    private final DirectoryFactory directoryFactory;
-    private final ImageFactory imageFactory;
+    @Autowired
+    private ImageUploader imageUploader;
+    @Autowired
+    private RealmService realmService;
+    @Autowired
+    private VirtualDirectoryService virtualDirectoryService;
+    @Autowired
+    private ImageRepository imageRepository;
+    @Autowired
+    private DirectoryFactory directoryFactory;
+    @Autowired
+    private ImageFactory imageFactory;
+    @Autowired
+    private ImageResizer imageResizer;
 
-    public ImageServiceImpl(ImageRepository imageRepository,
-                            ImageUploader imageUploader,
-                            RealmService realmService,
-                            VirtualDirectoryService virtualDirectoryService,
-                            DirectoryFactory directoryFactory,
-                            ImageFactory imageFactory) {
+    public ImageServiceImpl(ImageRepository imageRepository) {
         super(imageRepository);
-        this.imageUploader = imageUploader;
-        this.realmService = realmService;
-        this.virtualDirectoryService = virtualDirectoryService;
-        this.imageRepository = imageRepository;
-        this.directoryFactory = directoryFactory;
-        this.imageFactory = imageFactory;
     }
 
 
@@ -78,8 +78,8 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
         VirtualDirectory originFolder = null;
 
         if (nonNull(realmEntity.getRealmConfig())) {
-            final String realmCommonDir = realmEntity.getRealmConfig().getRealmDir();
-            originFolder = virtualDirectoryService.findByName(realmCommonDir);
+            final String realmVirtualDirectory = realmEntity.getRealmConfig().getRealmVirtualDirectory();
+            originFolder = virtualDirectoryService.findByName(realmVirtualDirectory);
         }
 
         if (isNull(originFolder)) {
@@ -100,6 +100,7 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
             originFolder = directoryFactory.create(originalFolderName, realmEntity, true);
             originFolder = virtualDirectoryService.create(originFolder);
             realmEntity.getDirectories().add(originFolder);
+
             realmService.update(realmEntity);
         }
 
@@ -107,6 +108,52 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
         final Image image = imageFactory.create(uploadFileName, (long) bytes.length, originFolder);
 
         return imageRepository.save(image);
+    }
+
+    @Transactional
+    public Image getResizedImage(String realm, String originalNameImage, Integer width, Integer height) {
+        ObjectThrow.requireNotNullThrow(realm, "Realm name mustn't be is null");
+        ObjectThrow.requireNotNullThrow(realm, "Image name mustn't be is null");
+
+        final Realm realmByName = realmService.findRealmByName(realm);
+        ObjectThrow.requireNotNullThrow(realmByName, "Realm mustn't be is null");
+
+        final Image image = imageRepository.findByOriginName(originalNameImage);
+
+        if (isNull(image)) {
+            throw new ImageNotFoundException("Image not found by original name");
+        }
+
+        VirtualDirectory virtualDirectory =
+                virtualDirectoryService.findVirtualDirectoryByRealmNameAndWidthAndHeight(realm, width, height);
+
+        if (isNull(virtualDirectory)) {
+            final String nameVirtualDirectory =  width + "_x_" + height;
+            final VirtualDirectory createdVirtualDirectory = new VirtualDirectory(nameVirtualDirectory, width, height);
+            virtualDirectory = virtualDirectoryService.create(createdVirtualDirectory);
+        }
+
+        if (isNull(virtualDirectory.getImages())) {
+            throw new ImageNotFoundException("Image Set not found inside virtual directory");
+        }
+
+        final Image imageFromVirtualDirectory = virtualDirectory.getImages().stream()
+                .filter(item -> nonNull(item.getId()))
+                .filter(item -> item.getId().equals(image.getId()))
+                .findFirst().orElse(null);
+
+        if (nonNull(imageFromVirtualDirectory)) {
+            final String virtualName = imageFromVirtualDirectory.getVirtualName();
+            final Path serFor = Paths.get(System.getProperty("user.home")).resolve("ser_for").resolve(virtualName);
+
+            if (Files.notExists(serFor)) {
+                throw new ImageNotFoundException("Image not found on the disk");
+            }
+
+            return imageFromVirtualDirectory;
+        }
+
+        return null;
     }
 
 }

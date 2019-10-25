@@ -52,13 +52,13 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
         return HttpResponse.responseCollection(directories);
     }
 
-    @GetMapping("{realmName}/{image}")
-    public ResponseEntity<List<VirtualDirectoryDTO>> getImageByDirectoryAndRealm(
-            @PathVariable String realmName,
-            @PathVariable String image,
-            @RequestParam("width") Integer width,
-            @RequestParam("height") Integer height) {
-        return ResponseEntity.ok().build();
+    @GetMapping("{realmName}/{originalName}")
+    public ResponseEntity<ImageDTO> getImageResize(@PathVariable String realmName,
+                                                   @PathVariable String originalName,
+                                                   @RequestParam("width") Integer width,
+                                                   @RequestParam("height") Integer height) {
+        ImageDTO resizedImage = imageFacade.getResizedImage(realmName, originalName, width, height);
+        return ResponseEntity.ok(resizedImage);
     }
 
     @GetMapping
@@ -72,7 +72,6 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
         RealmDTO realm = realmFacade.getRealmByName(realmName);
         return HttpResponse.responseEntity(realm);
     }
-
 
     @PostMapping
     public ResponseEntity<RealmDTO> createRealm(@RequestBody RealmDTO realm) {

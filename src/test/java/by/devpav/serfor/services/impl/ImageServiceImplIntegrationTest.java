@@ -48,14 +48,14 @@ public class ImageServiceImplIntegrationTest extends AbstractBasicEntityServiceT
     @Transactional
     public void findById() {
         final Image directory = new Image();
-        directory.setName(UUID.randomUUID().toString());
+        directory.setVirtualName(UUID.randomUUID().toString());
 
         final Image dir = imageService.create(directory);
         final Optional<Image> foundEntity = imageService.findById(dir.getId());
 
         assertTrue(foundEntity.isPresent());
         assertEquals(foundEntity.get().getId(), directory.getId());
-        assertEquals(foundEntity.get().getName(), directory.getName());
+        assertEquals(foundEntity.get().getVirtualName(), directory.getVirtualName());
     }
 
 }

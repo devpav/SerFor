@@ -5,6 +5,7 @@ import by.devpav.serfor.domain.dtos.ImageDTO;
 import by.devpav.serfor.facade.ImageFacade;
 import by.devpav.serfor.facade.mappers.ImageMapper;
 import by.devpav.serfor.services.ImageService;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,11 @@ public class ImageFacadeImpl extends AbstractBasicEntityFacade<Image, ImageDTO> 
     public ImageDTO getResizedImage(String realm, String originalNameImage, Integer width, Integer height) {
         Image resizedImage = imageService.getResizedImage(realm, originalNameImage, width, height);
         return imageMapper.toDTO(resizedImage);
+    }
+
+    @Override
+    public Resource loadImageByName(String imageName, String realm, String vdir) {
+        return imageService.loadImageByName(imageName, realm, vdir);
     }
 
 }

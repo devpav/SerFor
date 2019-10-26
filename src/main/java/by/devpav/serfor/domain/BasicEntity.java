@@ -1,10 +1,11 @@
 package by.devpav.serfor.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @MappedSuperclass
-public class BasicEntity {
+public class BasicEntity implements Serializable {
 
     @Id
     @Column(name = "id")

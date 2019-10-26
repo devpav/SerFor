@@ -9,11 +9,10 @@ import java.util.Objects;
 @Table(name = "images")
 public class Image extends BasicEntity {
 
-    @Column(name = "image_origin_name")
-    private String originName;
+    @Column(name = "image_original_name")
+    private String originalName;
 
-    @Id
-    @Column(name = "image_origin_name")
+    @Column(name = "image_virtual_name")
     private String virtualName;
 
     @Column(name = "image_length")
@@ -24,22 +23,57 @@ public class Image extends BasicEntity {
     @JsonBackReference("image_virtual_directory")
     private VirtualDirectory virtualDirectory;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference("image_image_parent")
+    private Image parentImage;
+
     public Image() {
     }
 
-    public Image(String originName, String virtualName, Long length) {
-        this.originName = originName;
+    public Image(String originalName, String virtualName, Long length) {
+        this.originalName = originalName;
         this.virtualName = virtualName;
         this.length = length;
     }
 
 
-    public String getOriginName() {
-        return originName;
+    public Image(String originalName,
+                 String virtualName,
+                 Long length,
+                 VirtualDirectory virtualDirectory,
+                 Image parentImage) {
+        this.originalName = originalName;
+        this.virtualName = virtualName;
+        this.length = length;
+        this.virtualDirectory = virtualDirectory;
+        this.parentImage = parentImage;
     }
 
-    public void setOriginName(String originName) {
-        this.originName = originName;
+    public Image(String virtualName, Long length) {
+        this.virtualName = virtualName;
+        this.length = length;
+    }
+
+    public Image(String virtualName, Long length, VirtualDirectory virtualDirectory) {
+        this.virtualName = virtualName;
+        this.virtualDirectory = virtualDirectory;
+        this.length = length;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
+
+    public Image getParentImage() {
+        return parentImage;
+    }
+
+    public void setParentImage(Image parentImage) {
+        this.parentImage = parentImage;
     }
 
     public String getVirtualName() {
@@ -70,16 +104,16 @@ public class Image extends BasicEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Image)) return false;
+        if (!super.equals(o)) return false;
         Image image = (Image) o;
-        return Objects.equals(getOriginName(), image.getOriginName()) &&
-                Objects.equals(getVirtualName(), image.getVirtualName()) &&
+        return Objects.equals(getVirtualName(), image.getVirtualName()) &&
                 Objects.equals(getLength(), image.getLength()) &&
                 Objects.equals(getVirtualDirectory(), image.getVirtualDirectory());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOriginName(), getVirtualName(), getLength(), getVirtualDirectory());
+        return Objects.hash(super.hashCode(), getVirtualName(), getLength(), getVirtualDirectory());
     }
 
 }

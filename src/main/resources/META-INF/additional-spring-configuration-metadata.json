@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "serfor.images.dir",
+      "type": "java.lang.String",
+      "description": "The property define a main directory wiche will be created after run the application"
+    }
+  ]
+}

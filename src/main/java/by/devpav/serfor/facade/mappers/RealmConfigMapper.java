@@ -6,4 +6,11 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface RealmConfigMapper extends BasicEntityMapper<RealmConfig, RealmConfigDTO> {
+
+    @Override
+    RealmConfig toEntity(RealmConfigDTO realmConfigDTO);
+
+    @Override
+    RealmConfigDTO toDTO(RealmConfig object);
+
 }

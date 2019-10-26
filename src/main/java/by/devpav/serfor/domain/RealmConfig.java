@@ -1,6 +1,7 @@
 package by.devpav.serfor.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "realm_configs")
@@ -10,7 +11,7 @@ public class RealmConfig extends BasicEntity {
     private String realmVirtualDirectory;
 
     @Column(name = "realm_max_image_length", nullable = false)
-    private String realmMaxImageLength;
+    private Integer realmMaxImageLength;
 
     @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "realm_config_id", referencedColumnName = "id")
@@ -19,7 +20,7 @@ public class RealmConfig extends BasicEntity {
     public RealmConfig() {
     }
 
-    public RealmConfig(String realmVirtualDirectory, String realmMaxImageLength) {
+    public RealmConfig(String realmVirtualDirectory, Integer realmMaxImageLength) {
         this.realmVirtualDirectory = realmVirtualDirectory;
         this.realmMaxImageLength = realmMaxImageLength;
     }
@@ -41,12 +42,28 @@ public class RealmConfig extends BasicEntity {
         this.realmVirtualDirectory = realmVirtualDirectory;
     }
 
-    public String getRealmMaxImageLength() {
+    public Integer getRealmMaxImageLength() {
         return realmMaxImageLength;
     }
 
-    public void setRealmMaxImageLength(String realmMaxImageLength) {
+    public void setRealmMaxImageLength(Integer realmMaxImageLength) {
         this.realmMaxImageLength = realmMaxImageLength;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RealmConfig)) return false;
+        if (!super.equals(o)) return false;
+        RealmConfig that = (RealmConfig) o;
+        return Objects.equals(getRealmVirtualDirectory(), that.getRealmVirtualDirectory()) &&
+                Objects.equals(getRealmMaxImageLength(), that.getRealmMaxImageLength()) &&
+                Objects.equals(getRealm(), that.getRealm());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getRealmVirtualDirectory(), getRealmMaxImageLength(), getRealm());
     }
 
 }

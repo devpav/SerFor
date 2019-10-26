@@ -9,11 +9,14 @@ import by.devpav.serfor.facade.ImageFacade;
 import by.devpav.serfor.facade.RealmFacade;
 import by.devpav.serfor.resources.RealmResource;
 import by.devpav.serfor.util.HttpResponse;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -35,10 +38,11 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
     }
 
 
-    @PostMapping(value = "{realmName}/original/upload", produces = {
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
-    })
+    @PostMapping(
+            value = "{realmName}/original/upload",
+            produces = {MediaType.APPLICATION_JSON_VALUE},
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
     public ResponseEntity<ImageDTO> uploadOriginImage(@RequestParam("image") MultipartFile multipart,
                                                       @PathVariable("realmName") String realmName) {
         final ImageDTO uploadedImage = imageFacade.uploadOriginalImage(multipart, realmName);
@@ -46,43 +50,62 @@ public class RealmResourceImpl extends AbstractBasicEntityResource<RealmDTO> imp
     }
 
     @GetMapping("{realmName}/directories")
-    public ResponseEntity<List<VirtualDirectoryDTO>> getDirectoriesByRealmName(
-            @PathVariable("realmName") String realmName) {
+    public ResponseEntity<List<VirtualDirectoryDTO>> getDirectoriesByRealmName(@PathVariable("realmName") String realmName) {
         final List<VirtualDirectoryDTO> directories = directoryFacade.findByRealmName(realmName);
         return HttpResponse.responseCollection(directories);
     }
 
-    @GetMapping("{realmName}/{originalName}")
+    @PostMapping(value = "{realmName}/{originalName:.+}")
     public ResponseEntity<ImageDTO> getImageResize(@PathVariable String realmName,
                                                    @PathVariable String originalName,
                                                    @RequestParam("width") Integer width,
                                                    @RequestParam("height") Integer height) {
-        ImageDTO resizedImage = imageFacade.getResizedImage(realmName, originalName, width, height);
-        return ResponseEntity.ok(resizedImage);
+        final ImageDTO resizedImage = imageFacade.getResizedImage(realmName, originalName, width, height);
+        return HttpResponse.responseEntity(resizedImage);
     }
 
     @GetMapping
     public ResponseEntity<List<RealmDTO>> getRealms() {
-        List<RealmDTO> realms = realmFacade.findAll();
-        return HttpResponse.responseCollection(realms);
+        return HttpResponse.responseCollection(realmFacade.findAll());
     }
 
     @GetMapping("/{realmName}")
     public ResponseEntity<RealmDTO> getRealmByName(@PathVariable String realmName) {
-        RealmDTO realm = realmFacade.getRealmByName(realmName);
-        return HttpResponse.responseEntity(realm);
+        return HttpResponse.responseEntity(realmFacade.getRealmByName(realmName));
     }
 
     @PostMapping
     public ResponseEntity<RealmDTO> createRealm(@RequestBody RealmDTO realm) {
-        return HttpResponse.responseEntity(realmFacade.create(realm));
+        return HttpResponse.responseCreatedEntity(realmFacade.create(realm));
     }
 
-    @Override()
+    @PutMapping
+    public ResponseEntity<RealmDTO> updateRealm(@RequestBody RealmDTO realm) {
+        return HttpResponse.responseCreatedEntity(realmFacade.update(realm));
+    }
+
+    @GetMapping("/{realmName}/{vdir}/images/{originalName:.+}")
+    public ResponseEntity<Resource> getRealmConfig(@PathVariable("realmName") String realmName,
+                                                   @PathVariable("vdir") String vdir,
+                                                   @PathVariable String originalName,
+                                                   HttpServletRequest httpServletRequest) {
+        final Resource resource = imageFacade.loadImageByName(originalName, realmName, vdir);
+
+        String contentType = "application/octet-stream";
+
+        try {
+            contentType = httpServletRequest.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return HttpResponse.responseResource(resource, contentType);
+    }
+
+    @Override
     @GetMapping("/{realmName}/config")
     public ResponseEntity<RealmConfigDTO> getRealmConfig(@PathVariable String realmName) {
-        final RealmConfigDTO realmConfig = realmFacade.getRealmConfig(realmName);
-        return HttpResponse.responseEntity(realmConfig);
+        return HttpResponse.responseEntity(realmFacade.getRealmConfig(realmName));
     }
 
 }

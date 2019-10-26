@@ -14,3 +14,6 @@ spring:
     console:
       enabled: true
 
+serfor:
+  images:
+    dir: sor-for

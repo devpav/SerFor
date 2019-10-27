@@ -5,4 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImageRepository extends BasicEntityRepository<Image> {
+
+    public Image findByVirtualName(String name);
+
 }

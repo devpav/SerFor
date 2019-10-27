@@ -5,7 +5,7 @@ import by.devpav.serfor.domain.dtos.RealmDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {
-        DirectoryMapper.class,
+        VirtualDirectoryMapper.class,
         RealmConfigMapper.class
 })
 public interface RealmMapper extends BasicEntityMapper<Realm, RealmDTO> {

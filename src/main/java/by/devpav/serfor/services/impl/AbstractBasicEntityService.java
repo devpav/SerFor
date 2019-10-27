@@ -28,4 +28,5 @@ public abstract class AbstractBasicEntityService<T extends BasicEntity>
 
         return basicEntityRepository.save(entity);
     }
+
 }

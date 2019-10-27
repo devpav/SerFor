@@ -32,4 +32,10 @@ public class RealmFacadeImpl extends AbstractBasicEntityFacade<Realm, RealmDTO> 
         return realmConfigMapper.toDTO(realmConfig);
     }
 
+    @Override
+    public RealmDTO getRealmByName(String realmName) {
+        final Realm realm = realmService.findRealmByName(realmName);
+        return realmMapper.toDTO(realm);
+    }
+
 }

@@ -5,7 +5,7 @@ INSERT into REALMS(id, REALM_NAME)
 VALUES ( 1, 'devpav-realm');
 
 INSERT into REALM_CONFIGS(id, DIRECTORY_REALM, REALM_CONFIG_ID)
-VALUES ( 1, 'directory-devpav-realm', 1);
+VALUES ( 1, 'virtualDirectory-devpav-realm', 1);
 
 INSERT into DIRECTORIES(id, DIRECTORY_NAME, DIRECTORY_HEIGHT, DIRECTORY_WIDTH, DIRECTORY_APPLICATION)
 VALUES ( 1, 'value_directory', 500, 500, 1);

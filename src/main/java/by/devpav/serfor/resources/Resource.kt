@@ -1,6 +1,3 @@
-package by.devpav.serfor.resources;
+package by.devpav.serfor.resources
 
-public interface Resource<T, ID> {
-
-
-}
+interface Resource<T, ID>

@@ -1,6 +1,11 @@
-package by.devpav.serfor.resources;
+package by.devpav.serfor.resources
 
-import by.devpav.serfor.domain.dtos.RealmConfigDTO;
+import by.devpav.serfor.domain.dtos.RealmConfigDTO
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 
-public interface RealmConfigResource extends BasicEntityResource<RealmConfigDTO> {
+interface RealmConfigResource : BasicEntityResource<RealmConfigDTO> {
+
+    fun getRealmConfig(@PathVariable realmName: String): ResponseEntity<RealmConfigDTO>
+
 }

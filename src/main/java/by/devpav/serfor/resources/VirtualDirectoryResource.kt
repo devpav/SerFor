@@ -1,12 +1,10 @@
-package by.devpav.serfor.resources;
+package by.devpav.serfor.resources
 
-import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO;
-import org.springframework.http.ResponseEntity;
+import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO
+import org.springframework.http.ResponseEntity
 
-import java.util.List;
+interface VirtualDirectoryResource {
 
-public interface VirtualDirectoryResource {
-
-    public ResponseEntity<List<VirtualDirectoryDTO>> getByRealmName(String realmName);
+    fun getByRealmName(realmName: String): ResponseEntity<List<VirtualDirectoryDTO>>
 
 }

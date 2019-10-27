@@ -1,119 +1,75 @@
-package by.devpav.serfor.domain;
+package by.devpav.serfor.domain
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonBackReference
+import java.util.*
+import javax.persistence.*
 
 @Entity
 @Table(name = "images")
-public class Image extends BasicEntity {
+class Image : BasicEntity {
 
     @Column(name = "image_original_name")
-    private String originalName;
+    var originalName: String? = null
 
     @Column(name = "image_virtual_name")
-    private String virtualName;
+    var virtualName: String? = null
 
     @Column(name = "image_length")
-    private Long length;
+    var length: Long? = null
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "image_virtual_directory")
     @JsonBackReference("image_virtual_directory")
-    private VirtualDirectory virtualDirectory;
+    var virtualDirectory: VirtualDirectory? = null
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JsonBackReference("image_image_parent")
-    private Image parentImage;
+    var parentImage: Image? = null
 
-    public Image() {
+    constructor() {}
+
+    constructor(originalName: String, virtualName: String, length: Long?) {
+        this.originalName = originalName
+        this.virtualName = virtualName
+        this.length = length
     }
 
-    public Image(String originalName, String virtualName, Long length) {
-        this.originalName = originalName;
-        this.virtualName = virtualName;
-        this.length = length;
+
+    constructor(originalName: String,
+                virtualName: String,
+                length: Long?,
+                virtualDirectory: VirtualDirectory,
+                parentImage: Image) {
+        this.originalName = originalName
+        this.virtualName = virtualName
+        this.length = length
+        this.virtualDirectory = virtualDirectory
+        this.parentImage = parentImage
     }
 
-
-    public Image(String originalName,
-                 String virtualName,
-                 Long length,
-                 VirtualDirectory virtualDirectory,
-                 Image parentImage) {
-        this.originalName = originalName;
-        this.virtualName = virtualName;
-        this.length = length;
-        this.virtualDirectory = virtualDirectory;
-        this.parentImage = parentImage;
+    constructor(virtualName: String, length: Long?) {
+        this.virtualName = virtualName
+        this.length = length
     }
 
-    public Image(String virtualName, Long length) {
-        this.virtualName = virtualName;
-        this.length = length;
+    constructor(virtualName: String, length: Long?, virtualDirectory: VirtualDirectory) {
+        this.virtualName = virtualName
+        this.virtualDirectory = virtualDirectory
+        this.length = length
     }
 
-    public Image(String virtualName, Long length, VirtualDirectory virtualDirectory) {
-        this.virtualName = virtualName;
-        this.virtualDirectory = virtualDirectory;
-        this.length = length;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Image) return false
+        if (!super.equals(other)) return false
+        val image = other as Image?
+        return virtualName == image!!.virtualName &&
+                length == image.length &&
+                virtualDirectory == image.virtualDirectory
     }
 
-    public String getOriginalName() {
-        return originalName;
-    }
-
-    public void setOriginalName(String originalName) {
-        this.originalName = originalName;
-    }
-
-    public Image getParentImage() {
-        return parentImage;
-    }
-
-    public void setParentImage(Image parentImage) {
-        this.parentImage = parentImage;
-    }
-
-    public String getVirtualName() {
-        return virtualName;
-    }
-
-    public void setVirtualName(String virtualName) {
-        this.virtualName = virtualName;
-    }
-
-    public Long getLength() {
-        return length;
-    }
-
-    public void setLength(Long length) {
-        this.length = length;
-    }
-
-    public VirtualDirectory getVirtualDirectory() {
-        return virtualDirectory;
-    }
-
-    public void setVirtualDirectory(VirtualDirectory virtualDirectory) {
-        this.virtualDirectory = virtualDirectory;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Image)) return false;
-        if (!super.equals(o)) return false;
-        Image image = (Image) o;
-        return Objects.equals(getVirtualName(), image.getVirtualName()) &&
-                Objects.equals(getLength(), image.getLength()) &&
-                Objects.equals(getVirtualDirectory(), image.getVirtualDirectory());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getVirtualName(), getLength(), getVirtualDirectory());
+    override fun hashCode(): Int {
+        return Objects.hash(super.hashCode(), virtualName, length, virtualDirectory)
     }
 
 }

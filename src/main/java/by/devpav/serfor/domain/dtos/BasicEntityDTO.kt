@@ -1,15 +1,7 @@
-package by.devpav.serfor.domain.dtos;
+package by.devpav.serfor.domain.dtos
 
-public class BasicEntityDTO {
+open class BasicEntityDTO {
 
-    protected Long id;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    var id: Long? = null
 
 }

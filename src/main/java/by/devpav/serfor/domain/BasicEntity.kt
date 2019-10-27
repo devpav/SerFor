@@ -1,35 +1,25 @@
-package by.devpav.serfor.domain;
+package by.devpav.serfor.domain
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Objects;
+import java.io.Serializable
+import java.util.*
+import javax.persistence.*
 
 @MappedSuperclass
-public class BasicEntity implements Serializable {
+open class BasicEntity : Serializable {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    var id: Long? = null
 
-    public Long getId() {
-        return id;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BasicEntity) return false
+        val that = other as BasicEntity?
+        return id == that!!.id
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BasicEntity)) return false;
-        BasicEntity that = (BasicEntity) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    override fun hashCode(): Int {
+        return Objects.hash(id)
     }
 }

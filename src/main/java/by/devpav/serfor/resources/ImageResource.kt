@@ -1,6 +1,5 @@
-package by.devpav.serfor.resources;
+package by.devpav.serfor.resources
 
-import by.devpav.serfor.domain.dtos.ImageDTO;
+import by.devpav.serfor.domain.dtos.ImageDTO
 
-public interface ImageResource extends BasicEntityResource<ImageDTO> {
-}
+interface ImageResource : BasicEntityResource<ImageDTO>

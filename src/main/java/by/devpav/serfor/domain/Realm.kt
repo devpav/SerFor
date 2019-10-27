@@ -1,69 +1,38 @@
-package by.devpav.serfor.domain;
+package by.devpav.serfor.domain
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
-import java.util.Objects;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonBackReference
+import java.util.*
+import javax.persistence.*
 
 @Entity
 @Table(name = "realms")
-public class Realm extends BasicEntity {
+class Realm : BasicEntity {
 
     @Column(name = "realm_name", nullable = false, unique = true)
-    private String name;
+    var name: String? = null
 
-    @OneToMany(mappedBy = "realm", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<VirtualDirectory> directories;
+    @OneToMany(mappedBy = "realm", fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
+    var directories: Set<VirtualDirectory>? = null
 
-    @OneToOne(mappedBy = "realm", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "realm", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonBackReference("realm-realm-config")
-    private RealmConfig realmConfig;
+    var realmConfig: RealmConfig? = null
 
-    public Realm() {
+    constructor() {}
+
+    constructor(name: String) {
+        this.name = name
     }
 
-    public Realm(String name) {
-        this.name = name;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o !is Realm) return false
+        val that = o as Realm?
+        return name == that!!.name && directories == that.directories
     }
 
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<VirtualDirectory> getDirectories() {
-        return directories;
-    }
-
-    public void setDirectories(Set<VirtualDirectory> directories) {
-        this.directories = directories;
-    }
-
-    public RealmConfig getRealmConfig() {
-        return realmConfig;
-    }
-
-    public void setRealmConfig(RealmConfig realmConfig) {
-        this.realmConfig = realmConfig;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Realm)) return false;
-        Realm that = (Realm) o;
-        return Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getDirectories(), that.getDirectories());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName());
+    override fun hashCode(): Int {
+        return Objects.hash(id, name)
     }
 
 }

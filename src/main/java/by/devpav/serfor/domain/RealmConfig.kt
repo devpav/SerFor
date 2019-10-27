@@ -1,69 +1,41 @@
-package by.devpav.serfor.domain;
+package by.devpav.serfor.domain
 
-import javax.persistence.*;
-import java.util.Objects;
+import java.util.*
+import javax.persistence.*
 
 @Entity
 @Table(name = "realm_configs")
-public class RealmConfig extends BasicEntity {
+class RealmConfig : BasicEntity {
 
     @Column(name = "realm_virtual_directory")
-    private String realmVirtualDirectory;
+    var realmVirtualDirectory: String? = null
 
     @Column(name = "realm_max_image_length", nullable = false)
-    private Integer realmMaxImageLength;
+    var realmMaxImageLength: Int? = null
 
     @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "realm_config_id", referencedColumnName = "id")
-    private Realm realm;
+    var realm: Realm? = null
 
-    public RealmConfig() {
+    constructor() {}
+
+    constructor(realmVirtualDirectory: String, realmMaxImageLength: Int?) {
+        this.realmVirtualDirectory = realmVirtualDirectory
+        this.realmMaxImageLength = realmMaxImageLength
     }
 
-    public RealmConfig(String realmVirtualDirectory, Integer realmMaxImageLength) {
-        this.realmVirtualDirectory = realmVirtualDirectory;
-        this.realmMaxImageLength = realmMaxImageLength;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o !is RealmConfig) return false
+        if (!super.equals(o)) return false
+        val that = o as RealmConfig?
+        return realmVirtualDirectory == that!!.realmVirtualDirectory &&
+                realmMaxImageLength == that.realmMaxImageLength &&
+                realm == that.realm
     }
 
-
-    public Realm getRealm() {
-        return realm;
-    }
-
-    public void setRealm(Realm realm) {
-        this.realm = realm;
-    }
-
-    public String getRealmVirtualDirectory() {
-        return realmVirtualDirectory;
-    }
-
-    public void setRealmVirtualDirectory(String realmVirtualDirectory) {
-        this.realmVirtualDirectory = realmVirtualDirectory;
-    }
-
-    public Integer getRealmMaxImageLength() {
-        return realmMaxImageLength;
-    }
-
-    public void setRealmMaxImageLength(Integer realmMaxImageLength) {
-        this.realmMaxImageLength = realmMaxImageLength;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RealmConfig)) return false;
-        if (!super.equals(o)) return false;
-        RealmConfig that = (RealmConfig) o;
-        return Objects.equals(getRealmVirtualDirectory(), that.getRealmVirtualDirectory()) &&
-                Objects.equals(getRealmMaxImageLength(), that.getRealmMaxImageLength()) &&
-                Objects.equals(getRealm(), that.getRealm());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getRealmVirtualDirectory(), getRealmMaxImageLength(), getRealm());
+    override fun hashCode(): Int {
+        return Objects.hash(super.hashCode(), realmVirtualDirectory, realmMaxImageLength, realm)
     }
 
 }

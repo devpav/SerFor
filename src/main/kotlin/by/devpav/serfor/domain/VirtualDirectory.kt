@@ -36,10 +36,10 @@ class VirtualDirectory : BasicEntity {
         this.height = height
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is VirtualDirectory) return false
-        val virtualDirectory = o as VirtualDirectory?
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is VirtualDirectory) return false
+        val virtualDirectory = other as VirtualDirectory?
         return name == virtualDirectory!!.name &&
                 realm == virtualDirectory.realm &&
                 images == virtualDirectory.images &&

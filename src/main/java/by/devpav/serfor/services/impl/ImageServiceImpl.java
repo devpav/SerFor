@@ -6,8 +6,6 @@ import by.devpav.serfor.domain.VirtualDirectory;
 import by.devpav.serfor.exceptions.EntityNotFoundException;
 import by.devpav.serfor.exceptions.ImageNotFoundException;
 import by.devpav.serfor.exceptions.ObjectThrow;
-import by.devpav.serfor.factory.DirectoryFactory;
-import by.devpav.serfor.factory.ImageFactory;
 import by.devpav.serfor.repository.ImageRepository;
 import by.devpav.serfor.services.ImageService;
 import by.devpav.serfor.services.RealmService;
@@ -16,7 +14,6 @@ import by.devpav.serfor.services.directories.SerForDirectoryManager;
 import by.devpav.serfor.services.files.SerForFileManager;
 import by.devpav.serfor.services.files.SerForImage;
 import by.devpav.serfor.services.impl.image.ImageLoader;
-import by.devpav.serfor.services.impl.image.ImageResizer;
 import by.devpav.serfor.services.impl.image.ImageUploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -40,12 +37,6 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
     private VirtualDirectoryService virtualDirectoryService;
     @Autowired
     private ImageRepository imageRepository;
-    @Autowired
-    private DirectoryFactory directoryFactory;
-    @Autowired
-    private ImageFactory imageFactory;
-    @Autowired
-    private ImageResizer imageResizer;
     @Autowired
     private SerForDirectoryManager serForDirectoryManager;
     @Autowired
@@ -164,7 +155,7 @@ public class ImageServiceImpl extends AbstractBasicEntityService<Image> implemen
         if (isNull(virtualDirectory)) {
             throw new EntityNotFoundException("Virtual directory not found");
         }
-        
+
         if (isNull(virtualDirectory.getImages())) {
             throw new EntityNotFoundException("Image not found inside virtual directory by name [" + vdir + "]");
         }

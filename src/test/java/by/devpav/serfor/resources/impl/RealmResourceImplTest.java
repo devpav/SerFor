@@ -3,6 +3,7 @@ package by.devpav.serfor.resources.impl;
 import by.devpav.serfor.domain.Realm;
 import by.devpav.serfor.domain.dtos.RealmDTO;
 import by.devpav.serfor.facade.mappers.RealmMapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class RealmResourceImplTest extends AbstractBasicEntityResourceTest {
 
     private static final String URL_RESOURCE = "/api/applications";

@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class VirtualDirectoryFacadeImpl extends AbstractBasicEntityFacade<VirtualDirectory, VirtualDirectoryDTO> implements VirtualDirectoryFacade {
+public class VirtualDirectoryFacadeImpl extends AbstractBasicEntityFacade<VirtualDirectory, VirtualDirectoryDTO>
+        implements VirtualDirectoryFacade {
 
     private final VirtualDirectoryService virtualDirectoryService;
     private final VirtualDirectoryMapper virtualDirectoryMapper;

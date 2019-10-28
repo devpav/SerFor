@@ -3,6 +3,7 @@ package by.devpav.serfor.services.impl;
 import by.devpav.serfor.domain.Image;
 import by.devpav.serfor.repository.ImageRepository;
 import by.devpav.serfor.services.VirtualDirectoryService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -10,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class ImageServiceImplTest {
 

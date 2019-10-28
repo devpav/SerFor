@@ -2,6 +2,7 @@ package by.devpav.serfor.services.impl;
 
 import by.devpav.serfor.domain.VirtualDirectory;
 import by.devpav.serfor.services.VirtualDirectoryService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-
+@Ignore
 public class VirtualVirtualVirtualDirectoryServiceImplIntegrationTest extends AbstractBasicEntityServiceTest<VirtualDirectory> {
 
     @Autowired

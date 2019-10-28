@@ -24,10 +24,10 @@ class Realm : BasicEntity {
         this.name = name
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is Realm) return false
-        val that = o as Realm?
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Realm) return false
+        val that = other as Realm?
         return name == that!!.name && directories == that.directories
     }
 

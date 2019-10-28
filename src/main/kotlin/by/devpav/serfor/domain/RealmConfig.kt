@@ -24,11 +24,11 @@ class RealmConfig : BasicEntity {
         this.realmMaxImageLength = realmMaxImageLength
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is RealmConfig) return false
-        if (!super.equals(o)) return false
-        val that = o as RealmConfig?
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is RealmConfig) return false
+        if (!super.equals(other)) return false
+        val that = other as RealmConfig?
         return realmVirtualDirectory == that!!.realmVirtualDirectory &&
                 realmMaxImageLength == that.realmMaxImageLength &&
                 realm == that.realm

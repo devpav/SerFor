@@ -8,13 +8,8 @@ import java.util.UUID;
 public class ImageNameGeneratorImpl implements ImageNameGenerator {
 
     @Override
-    public String generate(String originName, int height, int width) {
-        return getSalt() + "_" + height + "x" + width + "_" + originName;
-    }
-
-    @Override
     public String generate(int height, int width, String extension) {
-        return getSalt() + "_" + height + "x" + width + "." + extension;
+        return getSalt() + "." + extension;
     }
 
     @Override

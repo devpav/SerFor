@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface RealmRepository : BasicEntityRepository<Realm> {
 
-    fun findByName(name: String): Realm
+    fun findByName(name: String): Realm?
 
 }

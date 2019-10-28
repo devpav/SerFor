@@ -4,7 +4,7 @@ import by.devpav.serfor.domain.Realm;
 import by.devpav.serfor.domain.dtos.RealmDTO;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {
+@Mapper(config = MapperConfig.class, uses = {
         VirtualDirectoryMapper.class,
         RealmConfigMapper.class
 })

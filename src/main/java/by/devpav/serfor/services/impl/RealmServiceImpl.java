@@ -40,9 +40,8 @@ public class RealmServiceImpl extends AbstractBasicEntityService<Realm> implemen
 
         final Realm realm = realmRepository.findByName(entity.getName());
 
-        if (nonNull(realm)) {
+        if (nonNull(realm))
             throw new RealmWithNameAlreadyExists();
-        }
 
         foundRealm.setName(entity.getName());
 
@@ -69,7 +68,5 @@ public class RealmServiceImpl extends AbstractBasicEntityService<Realm> implemen
             entity.getRealmConfig().setRealm(entity);
         return super.create(entity);
     }
-
-
 
 }

@@ -4,7 +4,7 @@ import by.devpav.serfor.domain.VirtualDirectory;
 import by.devpav.serfor.domain.dtos.VirtualDirectoryDTO;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = MapperConfig.class)
 public interface VirtualDirectoryMapper extends BasicEntityMapper<VirtualDirectory, VirtualDirectoryDTO> {
 
     @Override

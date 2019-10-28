@@ -37,4 +37,5 @@ public class SerForImageBuilder {
     public SerForImage build() {
         return new SerForImageEntity(width, height, size, virtualName, originName);
     }
+
 }

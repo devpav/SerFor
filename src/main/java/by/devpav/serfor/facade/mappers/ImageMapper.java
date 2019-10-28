@@ -5,13 +5,8 @@ import by.devpav.serfor.domain.dtos.ImageDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(
-        componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        unmappedSourcePolicy = ReportingPolicy.IGNORE
-)
+@Mapper(config = MapperConfig.class)
 public interface ImageMapper extends BasicEntityMapper<Image, ImageDTO> {
 
     @Override

@@ -14,6 +14,7 @@ public class SerForDirectoryManagerImpl implements SerForDirectoryManager {
 
     private static final String homeDirectory = System.getProperty("user.home");
 
+
     @Override
     public Path getSerForFolder() {
         return Paths.get(homeDirectory).resolve(commonFolder);

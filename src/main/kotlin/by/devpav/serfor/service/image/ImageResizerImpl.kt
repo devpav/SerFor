@@ -1,21 +1,20 @@
-package by.devpav.serfor.services.impl.image;
+package by.devpav.serfor.service.image
 
-import org.springframework.stereotype.Component;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import by.devpav.serfor.services.impl.image.ImageResizer
+import org.springframework.stereotype.Component
+import java.awt.Image
+import java.awt.image.BufferedImage
 
 @Component
-public class ImageResizerImpl implements ImageResizer {
+class ImageResizerImpl : ImageResizer {
 
-    @Override
-    public BufferedImage resize(BufferedImage img, int height, int width) {
-        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resized.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-        return resized;
+    override fun resize(img: BufferedImage, height: Int, width: Int): BufferedImage {
+        val tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH)
+        val resized = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+        val g2d = resized.createGraphics()
+        g2d.drawImage(tmp, 0, 0, null)
+        g2d.dispose()
+        return resized
     }
 
 }

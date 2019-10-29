@@ -1,17 +1,14 @@
-package by.devpav.serfor.services.impl.image;
+package by.devpav.serfor.service.image
 
-import org.springframework.stereotype.Component;
-
-import static java.util.Objects.isNull;
+import by.devpav.serfor.services.impl.image.ImageRipper
+import org.springframework.stereotype.Component
 
 @Component
-public class ImageRipperImpl implements ImageRipper {
+class ImageRipperImpl : ImageRipper {
 
-    @Override
-    public String getImageExtension(String filename) {
-        if (isNull(filename)) return null;
-        final int lastIndex = filename.lastIndexOf(".") + 1;
-        return filename.contains(".") ? filename.substring(lastIndex) : null;
+    override fun getImageExtension(filename: String): String? {
+        val lastIndex = filename.lastIndexOf(".") + 1
+        return if (filename.contains(".")) filename.substring(lastIndex) else null
     }
 
 }

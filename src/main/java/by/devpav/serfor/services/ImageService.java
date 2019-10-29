@@ -21,4 +21,8 @@ public interface ImageService extends BasicEntityService<Image> {
      * @return resource of image
      */
     Resource loadImageByName(String imageName, String realm, String vdir);
+
+
+    Resource getImageResourceCache(String realmName, String originalImageName, Integer width, Integer height);
+
 }

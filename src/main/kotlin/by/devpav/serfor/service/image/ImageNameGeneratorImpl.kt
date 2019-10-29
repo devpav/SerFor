@@ -1,23 +1,21 @@
-package by.devpav.serfor.services.impl.image;
+package by.devpav.serfor.service.image
 
-import org.springframework.stereotype.Component;
-
-import java.util.UUID;
+import by.devpav.serfor.services.impl.image.ImageNameGenerator
+import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
-public class ImageNameGeneratorImpl implements ImageNameGenerator {
+class ImageNameGeneratorImpl : ImageNameGenerator {
 
-    @Override
-    public String generate(int height, int width, String extension) {
-        return getSalt() + "." + extension;
+    private val salt: String
+        get() = UUID.randomUUID().toString().substring(0, 7)
+
+    override fun generate(height: Int, width: Int, extension: String): String {
+        return "$salt.$extension"
     }
 
-    @Override
-    public String generate(String extension) {
-        return getSalt() + "." + extension;
+    override fun generate(extension: String): String {
+        return "$salt.$extension"
     }
 
-    public String getSalt() {
-        return UUID.randomUUID().toString().substring(0, 7);
-    }
 }

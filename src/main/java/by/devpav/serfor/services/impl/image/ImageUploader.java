@@ -5,8 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageUploader {
 
-    public SerForImage resizeAndUpload(String fileName, Integer width, Integer height);
-    public SerForImage upload(MultipartFile multipartFile);
-    public SerForImage upload(MultipartFile multipartFile, Integer width, Integer height);
+    SerForImage resizeAndUpload(String fileName, Integer width, Integer height);
+    SerForImage upload(MultipartFile multipartFile);
+    SerForImage upload(MultipartFile multipartFile, Integer width, Integer height);
 
 }

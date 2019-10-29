@@ -116,13 +116,34 @@ open class ImageServiceImpl(imageRepository: ImageRepository) : AbstractBasicEnt
 
         virtualDirectory.images ?: throw entityNotFoundException
 
-        val image: Image = virtualDirectory.images!!.find { it.originalName == imageName } ?:
-                throw EntityNotFoundException("Image not found inside virtual directory by name [$vdir]")
+        val image: Image = virtualDirectory.images!!.find { it.originalName == imageName }
+                ?: throw EntityNotFoundException("Image not found inside virtual directory by name [$vdir]")
 
         val virtualName = image.virtualName ?: throw ImageContainsBadData("Image contains virtual name is null")
         val realmImagePath = serForDirectoryManager.getRealmDirectory(realm).resolve(virtualName)
 
         return imageLoader.loadImage(realmImagePath)
     }
+
+    override fun getImageResourceCache(realmName: String?, originalImageName: String?, width: Int?, height: Int?)
+            : Resource? {
+
+        val realm = realmService.findRealmByName(realmName)
+        ObjectThrow.requireNotNullThrow(realm, "Realm mustn't be is null")
+
+        val directories = realm.directories
+        if (directories.isNullOrEmpty()) {
+            directories!!.filter { it.width != null && it.height != null }
+                    .filter { it.width?.equals(width)!! && it.height?.equals(height)!! }
+
+/*            filteredDirectories.map { virtualDirectory -> virtualDirectory.images }
+                    .filter { it != null }
+                    .reduce { origin, other -> {
+                        origin.
+                    }*/
+        }
+        return null
+    }
+
 
 }

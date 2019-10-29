@@ -2,6 +2,7 @@ package by.devpav.serfor.services.impl;
 
 import by.devpav.serfor.domain.Image;
 import by.devpav.serfor.repository.ImageRepository;
+import by.devpav.serfor.service.ImageServiceImpl;
 import by.devpav.serfor.services.VirtualDirectoryService;
 import org.junit.Ignore;
 import org.junit.Test;

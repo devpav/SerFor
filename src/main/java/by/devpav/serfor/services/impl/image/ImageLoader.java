@@ -2,8 +2,10 @@ package by.devpav.serfor.services.impl.image;
 
 import org.springframework.core.io.Resource;
 
+import java.nio.file.Path;
+
 public interface ImageLoader {
 
-    public Resource loadImage(String imageName);
+    Resource loadImage(Path pathToFile);
 
 }

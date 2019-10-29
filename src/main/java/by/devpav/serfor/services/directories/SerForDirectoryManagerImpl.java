@@ -25,4 +25,9 @@ public class SerForDirectoryManagerImpl implements SerForDirectoryManager {
         return this.getSerForFolder().resolve(imageName);
     }
 
+    @Override
+    public Path getRealmDirectory(String realmName) {
+        return this.getSerForFolder().resolve(realmName);
+    }
+
 }

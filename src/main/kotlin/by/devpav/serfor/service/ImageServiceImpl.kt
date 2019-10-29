@@ -1,173 +1,128 @@
-package by.devpav.serfor.services.impl;
+package by.devpav.serfor.service
 
-import by.devpav.serfor.domain.Image;
-import by.devpav.serfor.domain.Realm;
-import by.devpav.serfor.domain.VirtualDirectory;
-import by.devpav.serfor.exceptions.EntityNotFoundException;
-import by.devpav.serfor.exceptions.ImageNotFoundException;
-import by.devpav.serfor.exceptions.ObjectThrow;
-import by.devpav.serfor.repository.ImageRepository;
-import by.devpav.serfor.services.ImageService;
-import by.devpav.serfor.services.RealmService;
-import by.devpav.serfor.services.VirtualDirectoryService;
-import by.devpav.serfor.services.directories.SerForDirectoryManager;
-import by.devpav.serfor.services.files.SerForFileManager;
-import by.devpav.serfor.services.files.SerForImage;
-import by.devpav.serfor.services.impl.image.ImageLoader;
-import by.devpav.serfor.services.impl.image.ImageUploader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import by.devpav.serfor.domain.Image
+import by.devpav.serfor.exceptions.EntityNotFoundException
+import by.devpav.serfor.exceptions.ImageNotFoundException
+import by.devpav.serfor.exceptions.ObjectThrow
+import by.devpav.serfor.exceptions.image.ImageContainsBadData
+import by.devpav.serfor.repository.ImageRepository
+import by.devpav.serfor.services.ImageService
+import by.devpav.serfor.services.RealmService
+import by.devpav.serfor.services.VirtualDirectoryService
+import by.devpav.serfor.services.directories.SerForDirectoryManager
+import by.devpav.serfor.services.files.SerForFileManager
+import by.devpav.serfor.services.impl.AbstractBasicEntityService
+import by.devpav.serfor.services.impl.image.ImageLoader
+import by.devpav.serfor.services.impl.image.ImageUploader
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.Resource
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
-public class ImageServiceImpl extends AbstractBasicEntityService<Image> implements ImageService {
+open class ImageServiceImpl(imageRepository: ImageRepository) : AbstractBasicEntityService<Image>(imageRepository),
+        ImageService {
 
     @Autowired
-    private ImageUploader imageUploader;
+    private lateinit var imageUploader: ImageUploader
     @Autowired
-    private RealmService realmService;
+    private lateinit var realmService: RealmService
     @Autowired
-    private VirtualDirectoryService virtualDirectoryService;
+    private lateinit var virtualDirectoryService: VirtualDirectoryService
     @Autowired
-    private ImageRepository imageRepository;
+    private lateinit var imageRepository: ImageRepository
     @Autowired
-    private SerForDirectoryManager serForDirectoryManager;
+    private lateinit var serForDirectoryManager: SerForDirectoryManager
     @Autowired
-    private SerForFileManager serForFileManager;
+    private lateinit var serForFileManager: SerForFileManager
     @Autowired
-    private ImageLoader imageLoader;
+    private lateinit var imageLoader: ImageLoader
 
-    public ImageServiceImpl(ImageRepository imageRepository) {
-        super(imageRepository);
-    }
 
-    @Override
-    public Image create(Image entity) {
-        return super.create(entity);
-    }
-
-    @Override
     @Transactional
-    public Image uploadOriginalImage(MultipartFile multipartFile, String realm) {
-        ObjectThrow.requireNotNullThrow(multipartFile, "MultipartFile mustn't be is null");
-        ObjectThrow.requireNotNullThrow(realm, "Realm mustn't be is null");
+    override fun uploadOriginalImage(multipartFile: MultipartFile, realm: String): Image {
+        ObjectThrow.requireNotNullThrow(multipartFile, "MultipartFile mustn't be is null")
+        ObjectThrow.requireNotNullThrow(realm, "Realm mustn't be is null")
 
-        final Realm foundRealm = realmService.findRealmByName(realm);
+        val foundRealm = realmService.findRealmByName(realm)
 
-        if (isNull(foundRealm)) {
-            throw new EntityNotFoundException("Realm with name " + realm + " not found");
-        }
+        foundRealm ?: throw EntityNotFoundException("Realm with name $realm not found")
 
-        final SerForImage uploadedImage = imageUploader.upload(multipartFile);
+        val uploadedImage = imageUploader.upload(multipartFile)
 
-        final Image originalImage = new Image(
-                uploadedImage.getOriginName(),
-                uploadedImage.getVirtualName(),
-                uploadedImage.getSize()
-        );
+        val originalImage = Image(uploadedImage.originName, uploadedImage.virtualName, uploadedImage.size)
 
-        final Integer width = uploadedImage.getWidth();
-        final Integer height = uploadedImage.getHeight();
+        val width = uploadedImage.width
+        val height = uploadedImage.height
 
-        VirtualDirectory virtualDirectory = virtualDirectoryService.findVirtualDirectory(realm, width, height);
+        var virtualDirectory = virtualDirectoryService.findVirtualDirectory(realm, width, height)
+        virtualDirectory = virtualDirectory
+                ?: virtualDirectoryService.buildDirectory("${width}_x_${height}", width, height, foundRealm)
 
-        if (isNull(virtualDirectory)) {
-            final String nameVDirectory = width + "_x_" + height;
-            virtualDirectory = virtualDirectoryService.buildDirectory(nameVDirectory, width, height, foundRealm);
-        }
+        originalImage.virtualDirectory = virtualDirectory
+        originalImage.parentImage = null
 
-        originalImage.setVirtualDirectory(virtualDirectory);
-        originalImage.setParentImage(null);
-
-        return imageRepository.save(originalImage);
+        return imageRepository.save(originalImage)
     }
 
     @Transactional
-    @Override
-    public Image getResizedImage(String realm, String originalNameImage, Integer width, Integer height) {
-        ObjectThrow.requireNotNullThrow(realm, "Realm name mustn't be is null");
-        ObjectThrow.requireNotNullThrow(realm, "Image name mustn't be is null");
+    override fun getResizedImage(realm: String, originalNameImage: String, width: Int?, height: Int?): Image {
+        ObjectThrow.requireNotNullThrow(realm, "Realm name mustn't be is null")
+        ObjectThrow.requireNotNullThrow(realm, "Image name mustn't be is null")
 
-        final Realm realmByName = realmService.findRealmByName(realm);
-        ObjectThrow.requireNotNullThrow(realmByName, "Realm mustn't be is null");
+        val realmByName = realmService.findRealmByName(realm)
+        ObjectThrow.requireNotNullThrow(realmByName, "Realm mustn't be is null")
 
-        final Image image = imageRepository.findByVirtualName(originalNameImage);
+        val image = imageRepository.findByVirtualName(originalNameImage)
+                ?: throw ImageNotFoundException("Image not found by original name")
 
-        if (isNull(image)) {
-            throw new ImageNotFoundException("Image not found by original name");
+        if (image.parentImage == null)
+            throw ImageNotFoundException("Image isn't original image")
+
+        var virtualDirectory = virtualDirectoryService.findVirtualDirectory(realm, width, height)
+
+        virtualDirectory = virtualDirectory
+                ?: virtualDirectoryService.buildDirectory("${width}_x_${height}", width, height, realmByName)
+
+        virtualDirectory.images = virtualDirectory.images ?: HashSet()
+
+        val foundImage: Image? = virtualDirectory.images!!
+                .filter { it.id != null }
+                .find { it.id == image.id }
+
+        if (foundImage != null) {
+            val virtualName = foundImage.virtualName
+            val existsPhysicalFile = serForFileManager.isExists(virtualName, serForDirectoryManager.serForFolder)
+            return if (existsPhysicalFile) foundImage else throw ImageNotFoundException("Image not found on the disk")
         }
 
-        if (nonNull(image.getParentImage())) {
-            throw new ImageNotFoundException("Image isn't original image");
-        }
+        val serForImage = imageUploader.resizeAndUpload(originalNameImage, width, height)
 
-        VirtualDirectory virtualDirectory = virtualDirectoryService.findVirtualDirectory(realm, width, height);
+        val resizedName =
+                Image(serForImage.originName, serForImage.virtualName, serForImage.size, virtualDirectory, image)
 
-        if (isNull(virtualDirectory)) {
-            final String nameVDirectory = width + "_x_" + height;
-            virtualDirectory = virtualDirectoryService.buildDirectory(nameVDirectory, width, height, realmByName);
-        }
-
-        if (isNull(virtualDirectory.getImages())) {
-            virtualDirectory.setImages(new HashSet<>());
-            // throw new ImageNotFoundException("Image Set not found inside virtual directory");
-        }
-
-        final Image imageFromVirtualDirectory = virtualDirectory.getImages().stream()
-                .filter(item -> nonNull(item.getId()))
-                .filter(item -> item.getId().equals(image.getId()))
-                .findFirst()
-                .orElse(null);
-
-        if (nonNull(imageFromVirtualDirectory)) {
-            final String virtualName = imageFromVirtualDirectory.getVirtualName();
-
-            if (!serForFileManager.isExists(virtualName, serForDirectoryManager.getSerForFolder())) {
-                throw new ImageNotFoundException("Image not found on the disk");
-            }
-
-            return imageFromVirtualDirectory;
-        }
-
-        final SerForImage serForImage = imageUploader.resizeAndUpload(originalNameImage, width, height);
-
-        final Image resizedName = new Image(
-                serForImage.getOriginName(),
-                serForImage.getVirtualName(),
-                serForImage.getSize(),
-                virtualDirectory,
-                image
-        );
-
-        return imageRepository.save(resizedName);
+        return imageRepository.save(resizedName)
     }
 
-    @Override
-    public Resource loadImageByName(String imageName, String realm, String vdir) {
-        final VirtualDirectory virtualDirectory = virtualDirectoryService.findByName(vdir);
-        if (isNull(virtualDirectory)) {
-            throw new EntityNotFoundException("Virtual directory not found");
-        }
+    override fun loadImageByName(imageName: String, realm: String, vdir: String): Resource {
+        val virtualDirectory = virtualDirectoryService.findByName(vdir)
 
-        if (isNull(virtualDirectory.getImages())) {
-            throw new EntityNotFoundException("Image not found inside virtual directory by name [" + vdir + "]");
-        }
+        virtualDirectory ?: throw EntityNotFoundException("Virtual directory not found")
 
-        final Image foundImage = virtualDirectory.getImages().stream()
-                .filter(image -> image.getOriginalName().equals(imageName))
-                .findFirst()
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Image not found inside virtual directory by name [" + vdir + "]")
-                );
+        val entityNotFoundException =
+                EntityNotFoundException("Image not found inside virtual directory by name [$vdir]")
 
-        return imageLoader.loadImage(foundImage.getVirtualName());
+        virtualDirectory.images ?: throw entityNotFoundException
+
+        val image: Image = virtualDirectory.images!!.find { it.originalName == imageName } ?:
+                throw EntityNotFoundException("Image not found inside virtual directory by name [$vdir]")
+
+        val virtualName = image.virtualName ?: throw ImageContainsBadData("Image contains virtual name is null")
+        val realmImagePath = serForDirectoryManager.getRealmDirectory(realm).resolve(virtualName)
+
+        return imageLoader.loadImage(realmImagePath)
     }
 
 }

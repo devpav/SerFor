@@ -4,8 +4,11 @@ import java.nio.file.Path;
 
 public interface SerForDirectoryManager {
     
-    public Path getSerForFolder();
+    Path getSerForFolder();
     
-    public Path buildImagePath(String imageName);
-    
+    Path buildImagePath(String imageName);
+
+    Path getRealmDirectory(String realmName);
+
+
 }

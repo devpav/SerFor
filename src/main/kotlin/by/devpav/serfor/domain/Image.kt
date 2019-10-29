@@ -26,14 +26,13 @@ class Image : BasicEntity {
     @JsonBackReference("image_image_parent")
     var parentImage: Image? = null
 
-    constructor() {}
+    constructor()
 
     constructor(originalName: String, virtualName: String, length: Long?) {
         this.originalName = originalName
         this.virtualName = virtualName
         this.length = length
     }
-
 
     constructor(originalName: String,
                 virtualName: String,

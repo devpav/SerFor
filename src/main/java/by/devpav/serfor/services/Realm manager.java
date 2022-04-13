@@ -4,6 +4,6 @@ public interface RealmService {
 
     public Realm create(String name) throws RealmException;
     
-    public Realm getRealm(String name);
+    public Realm get(String name);
 
 }
